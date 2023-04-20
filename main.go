@@ -82,7 +82,7 @@ func handleSyncAliasesRequest(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	// sync aliases
-	_, err = opnsenseClient.SyncAliases(request.Host, request.Aliases, domainName)
+	_, err = opnsenseClient.SyncAliases(request.Host, request.Aliases)
 	if err != nil {
 		log.Fatalf("Error while syncing alias overrides: %v", err)
 	}
