@@ -21,6 +21,7 @@ type Client interface {
 	DeleteHostOverride(fqdn string) (bool, error)
 	DeleteAliasOverride(fqdn string) (bool, error)
 	SyncAliases(host string, aliases []string, domain string) (bool, error)
+	Reconfigure() error
 }
 
 type apiKeyClient struct {
@@ -249,4 +250,10 @@ func (c *apiKeyClient) getAliasesToCreateAndDelete(currentAliases []string, exis
 		}
 	}
 	return aliasesToCreate, aliasesToDelete
+}
+
+func (c *apiKeyClient) Reconfigure() error {
+	endpoint := fmt.Sprintf("%s/api/unbound/settings/reconfigure/", c.address)
+	_, err := c.newRequest().Post(endpoint)
+	return err
 }

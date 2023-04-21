@@ -86,6 +86,10 @@ func handleSyncAliasesRequest(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalf("Error while syncing alias overrides: %v", err)
 	}
+	err = opnsenseClient.Reconfigure()
+	if err != nil {
+		log.Fatalf("Error while reconfiguring Unbound: %v", err)
+	}
 }
 
 func getIPAddress(r *http.Request) (string, error) {
