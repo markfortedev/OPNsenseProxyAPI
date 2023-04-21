@@ -20,7 +20,7 @@ type Client interface {
 	DoesHostOverrideExist(fqdn string) (bool, error)
 	DeleteHostOverride(fqdn string) (bool, error)
 	DeleteAliasOverride(fqdn string) (bool, error)
-	SyncAliases(host string, aliases []string) (bool, error)
+	SyncAliases(host string, aliases []string, domain string) (bool, error)
 }
 
 type apiKeyClient struct {
@@ -191,7 +191,7 @@ func (c *apiKeyClient) performDelete(fqdn string, endpoint string) (bool, error)
 	return true, nil
 }
 
-func (c *apiKeyClient) SyncAliases(host string, currentAliases []string) (bool, error) {
+func (c *apiKeyClient) SyncAliases(host string, currentAliases []string, domain string) (bool, error) {
 	existingAliases, err := c.GetAliasOverridesForHost(host)
 	if err != nil {
 		return false, err
@@ -204,9 +204,7 @@ func (c *apiKeyClient) SyncAliases(host string, currentAliases []string) (bool, 
 		log.Infof("Creating %v aliases for %v: [%v]", len(aliasesToCreate), host, strings.Join(aliasesToCreate, ", "))
 	}
 	for _, aliasToCreate := range aliasesToCreate {
-		fqdnParts := strings.Split(aliasToCreate, ".")
-		hostname := fqdnParts[0]
-		domain := strings.Replace(aliasToCreate, fmt.Sprintf("%v.", hostname), "", -1)
+		hostname := strings.Replace(aliasToCreate, fmt.Sprintf(".%v", domain), "", -1)
 		aliasOverride := NewAliasOverride(hostname, domain, host)
 		_, err = c.CreateAliasOverride(aliasOverride)
 		if err != nil {
