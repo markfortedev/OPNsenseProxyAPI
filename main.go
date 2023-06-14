@@ -80,6 +80,10 @@ func handleSyncAliasesRequest(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatalf("Error while creating host override: %v", err)
 		}
+		err = opnsenseClient.Reconfigure()
+		if err != nil {
+			log.Fatalf("Error while reconfiguring Unbound: %v", err)
+		}
 	}
 	// sync aliases
 	_, err = opnsenseClient.SyncAliases(request.Host, request.Aliases, domainName)
