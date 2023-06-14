@@ -78,21 +78,21 @@ func handleSyncAliasesRequest(w http.ResponseWriter, r *http.Request) {
 		hostOverride := opnsense.NewHostOverride(hostname, domainName, hostIP)
 		_, err = opnsenseClient.CreateHostOverride(hostOverride)
 		if err != nil {
-			log.Fatalf("Error while creating host override: %v", err)
+			log.Errorf("Error while creating host override: %v", err)
 		}
 		err = opnsenseClient.Reconfigure()
 		if err != nil {
-			log.Fatalf("Error while reconfiguring Unbound: %v", err)
+			log.Errorf("Error while reconfiguring Unbound: %v", err)
 		}
 	}
 	// sync aliases
 	_, err = opnsenseClient.SyncAliases(request.Host, request.Aliases, domainName)
 	if err != nil {
-		log.Fatalf("Error while syncing alias overrides: %v", err)
+		log.Errorf("Error while syncing alias overrides: %v", err)
 	}
 	err = opnsenseClient.Reconfigure()
 	if err != nil {
-		log.Fatalf("Error while reconfiguring Unbound: %v", err)
+		log.Errorf("Error while reconfiguring Unbound: %v", err)
 	}
 }
 
